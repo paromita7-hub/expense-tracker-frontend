@@ -153,18 +153,19 @@ const ExpenseDashboard = () => {
       <div className="row mb-3">
         <div className="col-md-4">
           <label>Filter by Category</label>
-          <select
-            className="form-control"
-            value={searchCategory}
-            onChange={(e) => setSearchCategory(e.target.value)}
-          >
-            <option value="">All</option>
-            <option value="Food">Food</option>
-            <option value="Travel">Travel</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Health">Health</option>
-            <option value="Other">Other</option>
-          </select>
+          // Filter by Category dropdown
+<select
+  className="form-control"
+  value={searchCategory}
+  onChange={(e) => setSearchCategory(e.target.value)}
+>
+  <option value="">All</option>
+  <option value="Basic">Basic</option>
+  <option value="Essential">Essential</option>
+  <option value="Conditionally Essential">Conditionally Essential</option>
+  <option value="Non-Essential">Non-Essential</option>
+</select>
+
         </div>
         <div className="col-md-4">
           <label>Filter by Date</label>
@@ -203,18 +204,19 @@ const ExpenseDashboard = () => {
           />
         </div>
         <div className="col-md-2">
-          <select
-            className="form-control"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="">Select Category</option>
-            <option value="Food">Food</option>
-            <option value="Travel">Travel</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Health">Health</option>
-            <option value="Other">Other</option>
-          </select>
+          // Add New Expense - category dropdown
+<select
+  className="form-control"
+  value={category}
+  onChange={(e) => setCategory(e.target.value)}
+>
+  <option value="">Select Category</option>
+  <option value="Basic">Basic</option>
+  <option value="Essential">Essential</option>
+  <option value="Conditionally Essential">Conditionally Essential</option>
+  <option value="Non-Essential">Non-Essential</option>
+</select>
+
         </div>
         <div className="col-md-3">
           <DatePicker
@@ -268,17 +270,18 @@ const ExpenseDashboard = () => {
               </td>
               <td>
                 {editId === expense._id ? (
-                  <select
-                    className="form-control"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                  >
-                    <option value="Food">Food</option>
-                    <option value="Travel">Travel</option>
-                    <option value="Shopping">Shopping</option>
-                    <option value="Health">Health</option>
-                    <option value="Other">Other</option>
-                  </select>
+                  // Edit Expense - category dropdown
+<select
+  className="form-control"
+  value={category}
+  onChange={(e) => setCategory(e.target.value)}
+>
+  <option value="Basic">Basic</option>
+  <option value="Essential">Essential</option>
+  <option value="Conditionally Essential">Conditionally Essential</option>
+  <option value="Non-Essential">Non-Essential</option>
+</select>
+
                 ) : (
                   expense.category
                 )}
