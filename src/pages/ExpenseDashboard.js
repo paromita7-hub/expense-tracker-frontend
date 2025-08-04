@@ -44,17 +44,19 @@ const ExpenseDashboard = () => {
     fetchExpenses();
   }, [fetchExpenses]);
 
-  const handleDelete = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/expenses/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchExpenses();
-    } catch (error) {
-      console.error("Error deleting expense:", error);
-    }
-  };
+  // Inside handleDelete:
+const handleDelete = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.delete(`http://localhost:5000/api/expenses/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    await fetchExpenses(); // await ensures UI refreshes after deletion
+  } catch (error) {
+    console.error("Error deleting expense:", error);
+  }
+};
+
 
   const handleEdit = (expense) => {
     setEditId(expense._id);
@@ -98,32 +100,36 @@ const ExpenseDashboard = () => {
     setFilteredExpenses(result);
   };
 
-  const handleAddExpense = async () => {
-    if (!description || !amount || !category || !date) {
-      alert("Please fill in all fields.");
-      return;
-    }
+  // Inside handleAddExpense:
+const handleAddExpense = async () => {
+  if (!description || !amount || !category || !date) {
+    alert("Please fill in all fields.");
+    return;
+  }
 
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post('http://localhost:5000/api/expenses', {
-        description,
-        amount,
-        category,
-        date,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  try {
+    const token = localStorage.getItem("token");
+    await axios.post('http://localhost:5000/api/expenses', {
+      description,
+      amount: parseFloat(amount), // ensure number
+      category,
+      date,
+    }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      setDescription('');
-      setAmount('');
-      setCategory('');
-      setDate(new Date());
-      fetchExpenses();
-    } catch (error) {
-      console.error("Error adding expense:", error);
-    }
-  };
+    setDescription('');
+    setAmount('');
+    setCategory('');
+    setDate(new Date());
+
+    // await fetchExpenses() properly
+    await fetchExpenses();
+  } catch (error) {
+    console.error("Error adding expense:", error);
+  }
+};
+
 
   const handleClearFilters = () => {
     setSearchCategory('');
