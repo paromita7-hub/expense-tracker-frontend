@@ -153,7 +153,7 @@ const ExpenseDashboard = () => {
       <div className="row mb-3">
         <div className="col-md-4">
           <label>Filter by Category</label>
-          // Filter by Category dropdown
+          
 <select
   className="form-control"
   value={searchCategory}
@@ -204,7 +204,7 @@ const ExpenseDashboard = () => {
           />
         </div>
         <div className="col-md-2">
-          // Add New Expense - category dropdown
+        
 <select
   className="form-control"
   value={category}
