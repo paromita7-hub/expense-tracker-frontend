@@ -132,13 +132,20 @@ const handleDelete = async (id) => {
 
     await fetchExpenses(); // refresh after adding
   } catch (error) {
-    console.error("Error adding expense:", error); // ✅ added deeper logging
-    if (error.response) {
-      console.error("Response data:", error.response.data);
-      console.error("Status:", error.response.status);
+  console.error("Error adding expense:", error);
+
+  if (error.response) {
+    console.error("Response status:", error.response.status);
+    console.error("Response data:", error.response.data);
+    alert("Error: " + JSON.stringify(error.response.data));
+  } else {
+    alert("Unknown error occurred.");
     }
   }
 };
+
+
+
 
 
   const handleClearFilters = () => {
