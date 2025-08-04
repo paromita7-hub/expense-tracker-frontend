@@ -1,61 +1,72 @@
-import React, { useState } from "react";
+// ✅ src/pages/Login.js
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 
-function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+const Login = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
 
     try {
-      const res = await fetch("https://expense-tracker-backend-uuht.onrender.com/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await axios.post(
+        'https://expense-tracker-backend-uuht.onrender.com/api/auth/login',
+        {
+          email,
+          password,
+        }
+      );
 
-      const data = await res.json();
+      // Save token to localStorage
+      localStorage.setItem('token', res.data.token);
 
-      if (!res.ok) {
-        setError(data.message || "Login failed");
-        return;
-      }
-
-      // Save token and redirect
-      localStorage.setItem("token", data.token);
-      window.location.href = "/dashboard"; // or wherever your dashboard route is
+      // Navigate to dashboard
+      navigate('/dashboard');
     } catch (err) {
-      setError("Something went wrong. Please try again.");
+      setError(err.response?.data?.message || 'Login failed');
     }
   };
 
   return (
-    <div className="container">
+    <div style={{ padding: '2rem' }}>
       <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          required
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          required
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Login</button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Email:</label>
+          <input
+            type="email"
+            name="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div style={{ marginTop: '1rem' }}>
+          <label>Password:</label>
+          <input
+            type="password"
+            name="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <button style={{ marginTop: '1rem' }} type="submit">
+          Login
+        </button>
       </form>
+
+      {error && <p style={{ color: 'red', marginTop: '1rem' }}>{error}</p>}
+
+      <p style={{ marginTop: '1rem' }}>
+        Don’t have an account? <Link to="/register">Register here</Link>
+      </p>
     </div>
   );
-}
+};
 
 export default Login;
