@@ -1,5 +1,4 @@
-// ExpenseDashboard.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -24,7 +23,7 @@ const ExpenseDashboard = () => {
   const [searchDate, setSearchDate] = useState(null);
   const navigate = useNavigate();
 
-  const fetchExpenses = async () => {
+  const fetchExpenses = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get('http://localhost:5000/api/expenses', {
@@ -32,15 +31,14 @@ const ExpenseDashboard = () => {
       });
       setExpenses(response.data);
       setFilteredExpenses(response.data);
-    }catch (error) {
-  console.error("Error fetching expenses:", error);
-  if (error.response?.status === 401) {
-    localStorage.removeItem("token");
-    navigate("/login");
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+        navigate("/login");
       }
     }
-
-  };
+  }, [navigate]);
 
   useEffect(() => {
     fetchExpenses();
@@ -99,32 +97,33 @@ const ExpenseDashboard = () => {
     }
     setFilteredExpenses(result);
   };
-const handleAddExpense = async () => {
-  if (!description || !amount || !category || !date) {
-    alert("Please fill in all fields.");
-    return;
-  }
 
-  try {
-    const token = localStorage.getItem("token");
-    await axios.post('http://localhost:5000/api/expenses', {
-      description,
-      amount,
-      category,
-      date,
-    }, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  const handleAddExpense = async () => {
+    if (!description || !amount || !category || !date) {
+      alert("Please fill in all fields.");
+      return;
+    }
 
-    setDescription('');
-    setAmount('');
-    setCategory('');
-    setDate(new Date());
-    fetchExpenses();
-  } catch (error) {
-    console.error("Error adding expense:", error);
-  }
-};
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post('http://localhost:5000/api/expenses', {
+        description,
+        amount,
+        category,
+        date,
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setDescription('');
+      setAmount('');
+      setCategory('');
+      setDate(new Date());
+      fetchExpenses();
+    } catch (error) {
+      console.error("Error adding expense:", error);
+    }
+  };
 
   const handleClearFilters = () => {
     setSearchCategory('');
@@ -182,52 +181,53 @@ const handleAddExpense = async () => {
           <button className="btn btn-secondary" onClick={handleClearFilters}>Clear</button>
         </div>
       </div>
-<h4 className="mt-4">Add New Expense</h4>
-<div className="row mb-4">
-  <div className="col-md-3">
-    <input
-      type="text"
-      className="form-control"
-      placeholder="Description"
-      value={description}
-      onChange={(e) => setDescription(e.target.value)}
-    />
-  </div>
-  <div className="col-md-2">
-    <input
-      type="number"
-      className="form-control"
-      placeholder="Amount"
-      value={amount}
-      onChange={(e) => setAmount(e.target.value)}
-    />
-  </div>
-  <div className="col-md-2">
-    <select
-      className="form-control"
-      value={category}
-      onChange={(e) => setCategory(e.target.value)}
-    >
-      <option value="">Select Category</option>
-      <option value="Food">Food</option>
-      <option value="Travel">Travel</option>
-      <option value="Shopping">Shopping</option>
-      <option value="Health">Health</option>
-      <option value="Other">Other</option>
-    </select>
-  </div>
-  <div className="col-md-3">
-    <DatePicker
-      selected={date}
-      onChange={(date) => setDate(date)}
-      className="form-control"
-      dateFormat="yyyy-MM-dd"
-    />
-  </div>
-  <div className="col-md-2">
-    <button className="btn btn-success w-100" onClick={handleAddExpense}>Add Expense</button>
-  </div>
-</div>
+
+      <h4 className="mt-4">Add New Expense</h4>
+      <div className="row mb-4">
+        <div className="col-md-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+        <div className="col-md-2">
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Amount"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+        </div>
+        <div className="col-md-2">
+          <select
+            className="form-control"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="">Select Category</option>
+            <option value="Food">Food</option>
+            <option value="Travel">Travel</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Health">Health</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div className="col-md-3">
+          <DatePicker
+            selected={date}
+            onChange={(date) => setDate(date)}
+            className="form-control"
+            dateFormat="yyyy-MM-dd"
+          />
+        </div>
+        <div className="col-md-2">
+          <button className="btn btn-success w-100" onClick={handleAddExpense}>Add Expense</button>
+        </div>
+      </div>
 
       <table className="table table-bordered">
         <thead>
@@ -308,7 +308,6 @@ const handleAddExpense = async () => {
         </tbody>
       </table>
 
-      {/* Pie Chart */}
       <h4 className="mt-5">Pie Chart - Expenses by Category</h4>
       <PieChart width={400} height={300}>
         <Pie
@@ -328,7 +327,6 @@ const handleAddExpense = async () => {
         <Tooltip />
       </PieChart>
 
-      {/* Bar Chart */}
       <h4 className="mt-4">Bar Chart - Expenses by Category</h4>
       <BarChart width={500} height={300} data={chartData}>
         <CartesianGrid strokeDasharray="3 3" />
