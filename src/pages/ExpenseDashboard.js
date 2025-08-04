@@ -44,7 +44,7 @@ const ExpenseDashboard = () => {
 
   useEffect(() => {
     fetchExpenses();
-  }, []);
+  }, [fetchExpenses]);
 
   const handleDelete = async (id) => {
     try {
