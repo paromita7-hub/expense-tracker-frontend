@@ -100,8 +100,7 @@ const handleDelete = async (id) => {
     setFilteredExpenses(result);
   };
 
-  // Inside handleAddExpense:
-const handleAddExpense = async () => {
+  const handleAddExpense = async () => {
   if (!description || !amount || !category || !date) {
     alert("Please fill in all fields.");
     return;
@@ -109,24 +108,35 @@ const handleAddExpense = async () => {
 
   try {
     const token = localStorage.getItem("token");
-    await axios.post('http://localhost:5000/api/expenses', {
-      description,
-      amount: parseFloat(amount), // ensure number
-      category,
-      date,
-    }, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+
+    await axios.post(
+      'http://localhost:5000/api/expenses',
+      {
+        description,
+        amount: parseFloat(amount), // ensure number
+        category,
+        date,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json", // ✅ added this line
+        },
+      }
+    );
 
     setDescription('');
     setAmount('');
     setCategory('');
     setDate(new Date());
 
-    // await fetchExpenses() properly
-    await fetchExpenses();
+    await fetchExpenses(); // refresh after adding
   } catch (error) {
-    console.error("Error adding expense:", error);
+    console.error("Error adding expense:", error); // ✅ added deeper logging
+    if (error.response) {
+      console.error("Response data:", error.response.data);
+      console.error("Status:", error.response.status);
+    }
   }
 };
 
