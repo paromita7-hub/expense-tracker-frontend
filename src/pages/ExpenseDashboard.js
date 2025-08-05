@@ -1,3 +1,4 @@
+const API_BASE = 'https://expense-tracker-backend-uuht.onrender.com';
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
@@ -31,12 +32,10 @@ const ExpenseDashboard = () => {
     const token = localStorage.getItem("token");
 
     const [expensesRes, totalRes] = await Promise.all([
-      axios.get('http://localhost:5000/api/expenses', {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
-      axios.get('http://localhost:5000/api/expenses/total/expense', {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
+      axios.get(`${API_BASE}/api/expenses`, { headers: { Authorization: `Bearer ${token}` } }),
+
+      axios.get(`${API_BASE}/api/expenses`, { headers: { Authorization: `Bearer ${token}` } })
+
     ]);
 
     setExpenses(expensesRes.data);
@@ -60,9 +59,10 @@ const ExpenseDashboard = () => {
 const handleDelete = async (id) => {
   try {
     const token = localStorage.getItem("token");
-    await axios.delete(`http://localhost:5000/api/expenses/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    await axios.delete(`${API_BASE}/api/expenses/${id}`, {
+  headers: { Authorization: `Bearer ${token}` },
+});
+
     await fetchExpenses(); // await ensures UI refreshes after deletion
   } catch (error) {
     console.error("Error deleting expense:", error);
@@ -81,14 +81,15 @@ const handleDelete = async (id) => {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`http://localhost:5000/api/expenses/${editId}`, {
-        amount,
-        category,
-        description,
-        date,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.put(`${API_BASE}/api/expenses/${editId}`, {
+  amount,
+  category,
+  description,
+  date,
+}, {
+  headers: { Authorization: `Bearer ${token}` },
+});
+
       setEditId(null);
       setAmount('');
       setCategory('');
@@ -121,9 +122,8 @@ const handleDelete = async (id) => {
   try {
     const token = localStorage.getItem("token");
 
-    await axios.post(
-      'http://localhost:5000/api/expenses',
-      {
+    await axios.post(`${API_BASE}/api/expenses`, {
+
         description,
         amount: parseFloat(amount), // ensure number
         category,
