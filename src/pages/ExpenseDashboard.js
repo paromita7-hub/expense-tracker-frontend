@@ -1,4 +1,3 @@
-const API_BASE = 'https://expense-tracker-backend-uuht.onrender.com';
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
@@ -9,7 +8,7 @@ import {
   PieChart, Pie, Cell, Tooltip,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend,
 } from 'recharts';
-
+const API_BASE = 'https://expense-tracker-backend-uuht.onrender.com';
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#00C49F'];
 
 const ExpenseDashboard = () => {
