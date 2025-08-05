@@ -14,6 +14,8 @@ const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#00C49F'];
 const ExpenseDashboard = () => {
   const [expenses, setExpenses] = useState([]);
   const [filteredExpenses, setFilteredExpenses] = useState([]);
+  const totalFiltered = filteredExpenses.reduce((sum, exp) => sum + Number(exp.amount), 0);
+  const [totalExpense, setTotalExpense] = useState(0);
   const [editId, setEditId] = useState(null);
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
@@ -23,22 +25,32 @@ const ExpenseDashboard = () => {
   const [searchDate, setSearchDate] = useState(null);
   const navigate = useNavigate();
 
+
   const fetchExpenses = useCallback(async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get('http://localhost:5000/api/expenses', {
+  try {
+    const token = localStorage.getItem("token");
+
+    const [expensesRes, totalRes] = await Promise.all([
+      axios.get('http://localhost:5000/api/expenses', {
         headers: { Authorization: `Bearer ${token}` },
-      });
-      setExpenses(response.data);
-      setFilteredExpenses(response.data);
-    } catch (error) {
-      console.error("Error fetching expenses:", error);
-      if (error.response?.status === 401) {
-        localStorage.removeItem("token");
-        navigate("/login");
-      }
+      }),
+      axios.get('http://localhost:5000/api/expenses/total/expense', {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    ]);
+
+    setExpenses(expensesRes.data);
+    setFilteredExpenses(expensesRes.data);
+    setTotalExpense(totalRes.data.totalExpense || 0);
+  } catch (error) {
+    console.error("Error fetching expenses:", error);
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      navigate("/login");
     }
-  }, [navigate]);
+  }
+}, [navigate]);
+
 
   useEffect(() => {
     fetchExpenses();
@@ -154,10 +166,11 @@ const handleDelete = async (id) => {
     setFilteredExpenses(expenses);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+ const handleLogout = () => {
+  localStorage.removeItem("token");
+  navigate("/login");
+};
+
 
   const chartData = Object.values(filteredExpenses.reduce((acc, curr) => {
     acc[curr.category] = acc[curr.category] || { category: curr.category, amount: 0 };
@@ -168,6 +181,12 @@ const handleDelete = async (id) => {
   return (
     <div className="container mt-4">
       <h2 className="text-center mb-4">Expense Dashboard</h2>
+      <div className="alert alert-info text-center fw-bold fs-5">
+  Total Expense: ₹{totalExpense}
+</div>
+      <div className="alert alert-warning text-center fw-bold fs-6">
+  Filtered Total: ₹{totalFiltered}
+</div>
 
       <div className="d-flex justify-content-end mb-3">
         <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
