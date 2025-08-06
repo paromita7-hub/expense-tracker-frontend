@@ -31,11 +31,14 @@ const ExpenseDashboard = () => {
     const token = localStorage.getItem("token");
 
     const [expensesRes, totalRes] = await Promise.all([
-      axios.get(`${API_BASE}/api/expenses`, { headers: { Authorization: `Bearer ${token}` } }),
+  axios.get(`${API_BASE}/api/expenses`, {
+    headers: { Authorization: `Bearer ${token}` }
+  }),
+  axios.get(`${API_BASE}/api/expenses/total/expense`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+]);
 
-      axios.get(`${API_BASE}/api/expenses`, { headers: { Authorization: `Bearer ${token}` } })
-
-    ]);
 
     setExpenses(expensesRes.data);
     setFilteredExpenses(expensesRes.data);

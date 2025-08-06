@@ -1,9 +1,9 @@
-// ✅ src/pages/Register.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // ✅ updated
 
 const Register = () => {
+  const navigate = useNavigate(); // ✅ added
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
 
   const handleChange = e => {
@@ -13,14 +13,18 @@ const Register = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', formData);
+      const res = await axios.post('https://expense-tracker-backend-uuht.onrender.com/api/auth/register', formData);
       alert('Registration successful!');
-      console.log(res.data); // You can redirect or store token
+      console.log(res.data);
+      navigate('/'); // ✅ redirect to login
     } catch (err) {
       console.error(err.response?.data?.message || err.message);
       alert('Registration failed.');
     }
   };
+
+  // ...rest of your code stays the same
+
 
   return (
     <div style={{ padding: '2rem' }}>
